@@ -18,7 +18,7 @@ const ChatSectionSideBar = () => {
   );
 
   return (
-    <div className="p-4 border rounded-xl bg-white shadow-sm w-full max-w-xs overflow-y-auto h-[500px]">
+    <div className="p-4 border rounded-xl bg-white shadow-sm w-full max-w-xs  h-[500px]">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-800">Chat</h3>

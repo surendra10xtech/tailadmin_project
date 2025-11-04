@@ -4,9 +4,9 @@ import Message from "./Message";
 
 const ChatSectionArea = () => {
   return (
-    <div className="p-4 border rounded-xl h-full flex flex-col">
+    <div className="p-4 border rounded-xl h-full flex flex-col ">
       <ChatAreaHeader />
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 ">
         <Message />
       </div>
     </div>

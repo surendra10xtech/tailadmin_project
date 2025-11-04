@@ -1,85 +1,155 @@
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
-import { Smile, Paperclip, Mic, Send } from "lucide-react"; // ✅ icons imported
-import image from "../../data/photo.png";
+import { Smile, Paperclip, Send } from "lucide-react";
+import pic from "../../data/photo.png";
+import EmojiPicker from "emoji-picker-react";
+import VoiceRecorder from "./VoiceRecorder";
+
 
 const Message = () => {
+  const [messages,setMessages] = useState([
+    {text:"Hello jiiiiiiiii, Good monring",sender:"other",image:""},
+      {text:"Good Morning! How Are you today??",sender:"me",image:""},
+      {text:"EveryThing okay ",sender:"other",image:""},
+      {text:"ohhh nice ",sender:"me",image:""},
+  ]);
+
+  const [input,setInput] = useState("");
+  const [file,setFile] = useState(null);
+  const [isTyping,setIsTyping] = useState(false);
+  const [showEmoji, setShowEmoji] = useState(false);
+
+
+  const handleSend = () =>{
+    if(!input.trim() && !file) return;
+
+    let newMessage;
+    if(file){
+      newMessage =  { image: file, sender: "me" };
+    }
+    else{
+       newMessage = { text: input, sender: "me" };
+    }
+    // const newMessage = {text:input,sender:"me"};
+    setMessages((prev) => [...prev, newMessage]); // i dont known why red line appear
+    setInput("");
+    console.log(messages);
+    setFile(null);
+
+    setTimeout(() =>{
+      setIsTyping(true);
+    },3000);
+
+    setTimeout(() =>{
+      setIsTyping(false);
+      handleReply();
+    },10000);
+  };
+
+  const handleReply = () => {
+    const autoReplies = [
+      "That's interesting!",
+      "Tell me more about it.",
+      "Really? Sounds cool!",
+      "I totally agree with you!",
+      "Haha, nice one!",
+      "Can you explain that again?",
+    ];
+
+    const randomReply = autoReplies[Math.floor(Math.random()*autoReplies.length)];
+    const newMessage = { text: randomReply, sender: "other", image: "" };
+    setMessages((prev) =>[...prev,newMessage]);
+  }
+
+  const handleFile = (e) =>{
+    const selectedFile = e.target.files?.[0];
+    if(!selectedFile) return;
+
+    const imageURL = URL.createObjectURL(selectedFile);
+    setInput((prev)=> prev + imageURL);
+    setFile(imageURL);
+ 
+  };
+
+  const handleEmojiClick = (emojiData) =>{
+    setInput((prev) =>  prev + emojiData.emoji);
+    setShowEmoji(false);
+  }
+
   return (
     <div className="m-2 w-full flex flex-col gap-4">
-      {/* Message Receiver */}
-      <div className="flex items-end gap-3 max-w-[70%]">
-        <Image
-          src={image}
-          alt="Profile photo"
-          width={40}
-          height={40}
-          className="rounded-full"
-        />
-        <div>
-          <p className="bg-gray-300 text-sm p-2 rounded-lg">
-            I want to make an appointment tomorrow from 2:00 to 5:00
-          </p>
-          <span className="text-xs text-gray-500">2 hours ago</span>
-        </div>
-      </div>
+        <div className="flex flex-col gap-4 overflow-y-auto max-h-[70vh]">
+        {messages.map((msg,i)=>(
+          <div
+          key={i}
+           className={`flex items-end gap-3 ${
+              msg.sender === "me" ? "self-end flex-row-reverse" : ""
+            }`}
+          >
+            <Image
+            src={pic}
+            alt="Profile"
+            width={40}
+            height={40}
+            className="rounded-full"
+            />
 
-      {/* Message Sender */}
-      <div className="flex items-end gap-3 self-end max-w-[70%]">
-        <div className="text-right">
-          <p className="bg-blue-500 text-white text-sm p-2 rounded-lg">
-            Sure, that time works perfectly!
-          </p>
-          <span className="text-xs text-gray-500">Just now</span>
-        </div>
-        <Image
-          src={image}
-          alt="Profile photo"
-          width={40}
-          height={40}
-          className="rounded-full"
-        />
-      </div>
+            <div
+              className={`p-2 rounded-lg text-sm ${
+                msg.sender === "me"
+                  ? "bg-blue-500 text-white rounded-br-none"
+                  : "bg-gray-300 text-black rounded-bl-none"
+              }`}
+            >
+               {msg.text && <p>{msg.text}</p>}
+               {msg.image && (
+                <Image
+                  src={msg.image}
+                  alt="Uploaded"
+                  width={150}
+                  height={150}
+                  className="rounded-lg mt-2"
+                />
+              )}
 
+              {msg.audio && (
+              <audio
+              controls
+              src={msg.audio}
+              className="mt-2 rounded-lg"
+            ></audio>
+          )}
+              
+            </div>
+          </div>
+        ))}
 
-      {/* Message Receiver */}
-      <div className="flex items-end gap-3 max-w-[70%]">
-        <Image
-          src={image}
-          alt="Profile photo"
-          width={40}
-          height={40}
-          className="rounded-full"
-        />
-        <div>
-          <p className="bg-gray-300 text-sm p-2 rounded-lg">
-            I want to make an appointment tomorrow from 2:00 to 5:00
-          </p>
-          <span className="text-xs text-gray-500">2 hours ago</span>
-        </div>
-      </div>
+          {isTyping && (
+          <div className="flex items-center gap-3">
+            <Image
+              src={pic}
+              alt="Profile"
+              width={40}
+              height={40}
+              className="rounded-full"
+            />
+            <div className="bg-green-300 text-black px-3 py-2 rounded-lg rounded-bl-none text-sm">
+              <span className="flex gap-1">
+                <span className="animate-bounce">●</span>
+                <span className="animate-bounce delay-150">●</span>
+                <span className="animate-bounce delay-300">●</span>
+              </span>
+            </div>
+          </div>
+          )}
 
-
-      {/* Message Sender */}
-      <div className="flex items-end gap-3 self-end max-w-[70%]">
-        <div className="text-right">
-          <p className="bg-blue-500 text-white text-sm p-2 rounded-lg">
-            Sure, that time works perfectly!
-          </p>
-          <span className="text-xs text-gray-500">Just now</span>
-        </div>
-        <Image
-          src={image}
-          alt="Profile photo"
-          width={40}
-          height={40}
-          className="rounded-full"
-        />
       </div>
 
       {/* Message Input Box */}
       <div className="flex items-center gap-3 mt-4 p-2 border-t border-gray-300 bg-white rounded-lg">
         {/* Emoji icon */}
-        <button className="text-gray-600 hover:text-yellow-500">
+        <button onClick={() => setShowEmoji(!showEmoji)}
+        className="text-gray-600 hover:text-yellow-500">
           <Smile size={22} />
         </button>
 
@@ -89,25 +159,39 @@ const Message = () => {
         <input
           type="text"
           placeholder="Type your message..."
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
           className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm outline-none"
         />
 
          {/* File  */}
         <label className="cursor-pointer text-gray-600 hover:text-blue-600">
           <Paperclip size={22} />
-          <input type="file" className="hidden" />
+          <input onChange={handleFile}
+          type="file" 
+          className="hidden" 
+          accept="image/*"
+          />
         </label>
 
-        {/* Mic  */}
-        <button className="text-gray-600 hover:text-red-500">
-          <Mic size={22} />
-        </button>
+        {/* Mic Recorder Component */}
+      <VoiceRecorder
+          onRecordComplete={(audioURL) => {
+           setMessages((prev) => [...prev, { audio: audioURL, sender: "me" },]); // here also 
+              }}
+              />
 
         {/* Send  */}
-        <button className="bg-blue-500 hover:bg-blue-600 text-white rounded-full p-2">
+        <button onClick={handleSend}
+        className="bg-blue-500 hover:bg-blue-600 text-white rounded-full p-2">
           <Send size={20} />
         </button>
       </div>
+      {showEmoji && (
+          <div className="absolute bottom-14 left-[50%] z-10">
+            <EmojiPicker onEmojiClick={handleEmojiClick} />
+          </div>
+        )}
     </div>
   );
 };
