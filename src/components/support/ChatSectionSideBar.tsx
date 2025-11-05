@@ -10,16 +10,25 @@ const ChatName = [
   { name: "Aarav", role: "Support", image: "" },
 ];
 
-const ChatSectionSideBar = () => {
-  const [search, setSearch] = useState("");
 
+type User = {
+  name: string;
+  role: string;
+  image: string;
+};
+
+interface ChatSectionSideBarProps {
+  onSelectUser: (user: User) => void; // callback function with User type
+}
+
+const ChatSectionSideBar: React.FC<ChatSectionSideBarProps> = ({ onSelectUser }) => {
+  const [search, setSearch] = useState("");
   const filteredUsers = ChatName.filter((user) =>
     user.name.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <div className="p-4 border rounded-xl bg-white shadow-sm w-full max-w-xs  h-[500px]">
-      {/* Header */}
+    <div className="p-4 border  bg-white shadow-sm w-full max-w-xs  overflow-y-auto">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-800">Chat</h3>
         <span className="text-gray-500">⋮</span>
@@ -32,7 +41,8 @@ const ChatSectionSideBar = () => {
           placeholder="Search..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 text-sm border border-gray-300 
+          rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
 
@@ -42,7 +52,9 @@ const ChatSectionSideBar = () => {
           filteredUsers.map((user, index) => (
             <div
               key={`${user.name}-${index}`}
-              className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 cursor-pointer transition"
+            onClick={() => onSelectUser(user)}
+              className="flex items-center gap-3 p-2 rounded-lg
+               hover:bg-gray-100 cursor-pointer transition"
             >
               <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 font-semibold">
                 {user.name.charAt(0)}

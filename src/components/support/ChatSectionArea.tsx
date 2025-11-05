@@ -2,10 +2,20 @@ import React from "react";
 import ChatAreaHeader from "./ChatAreaHeader";
 import Message from "./Message";
 
-const ChatSectionArea = () => {
+
+type User = {
+  name: string;
+  role: string;
+  image: string;
+};
+
+interface ChatSectionAreaProps {
+  selectedUser: User;
+}
+const ChatSectionArea: React.FC<ChatSectionAreaProps> = ({ selectedUser }) => {
   return (
     <div className="p-4 border rounded-xl h-full flex flex-col ">
-      <ChatAreaHeader />
+      <ChatAreaHeader  selectedUser = {selectedUser}/>
       <div className="flex-1 ">
         <Message />
       </div>

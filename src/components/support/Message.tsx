@@ -2,20 +2,26 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { Smile, Paperclip, Send } from "lucide-react";
 import pic from "../../data/photo.png";
-import EmojiPicker from "emoji-picker-react";
+import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import VoiceRecorder from "./VoiceRecorder";
 
 
+type Message = {
+  sender: string;   // always required
+  text?: string;    // optional because not every message has text
+  image?: string;   // optional because only image messages have it
+  audio?: string;   // optional because only audio messages have it
+};
 const Message = () => {
-  const [messages,setMessages] = useState([
-    {text:"Hello jiiiiiiiii, Good monring",sender:"other",image:""},
+const [messages, setMessages] = useState<Message[]>([
+      {text:"Hello jiiiiiiiii, Good monring",sender:"other",image:""},
       {text:"Good Morning! How Are you today??",sender:"me",image:""},
       {text:"EveryThing okay ",sender:"other",image:""},
       {text:"ohhh nice ",sender:"me",image:""},
   ]);
 
   const [input,setInput] = useState("");
-  const [file,setFile] = useState(null);
+  const [file, setFile] = useState<string | null>(null);
   const [isTyping,setIsTyping] = useState(false);
   const [showEmoji, setShowEmoji] = useState(false);
 
@@ -61,7 +67,7 @@ const Message = () => {
     setMessages((prev) =>[...prev,newMessage]);
   }
 
-  const handleFile = (e) =>{
+  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if(!selectedFile) return;
 
@@ -71,7 +77,7 @@ const Message = () => {
  
   };
 
-  const handleEmojiClick = (emojiData) =>{
+ const handleEmojiClick = (emojiData: EmojiClickData) => {
     setInput((prev) =>  prev + emojiData.emoji);
     setShowEmoji(false);
   }

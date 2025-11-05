@@ -1,12 +1,21 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 // import AppHeader from "@/layout/AppHeader";
 // import AppSidebar from "@/layout/AppSidebar";
 import ChatSectionSideBar from "@/components/support/ChatSectionSideBar";
 import ChatSectionArea from "@/components/support/ChatSectionArea";
 
 const Page = () => {
+
+  // initial header data
+   const [selectedUser, setSelectedUser] = useState({
+    name: "Surendra",
+    role: "Developer",
+    image: "/data/photo.png", 
+    
+  });
+
   return (
     <div className="flex min-h-screen bg-gray-50">
     
@@ -23,12 +32,12 @@ const Page = () => {
           {/*  User List */}
           <div className="w-[30%] h-full bg-white rounded-xl shadow-sm border overflow-y-auto">
             
-            <ChatSectionSideBar />
+            <ChatSectionSideBar onSelectUser ={setSelectedUser}/>
           </div>
 
           {/* message area */}
           <div className="flex-1 h-full bg-white rounded-xl shadow-sm border overflow-y-auto">
-            <ChatSectionArea />
+            <ChatSectionArea selectedUser ={selectedUser}/>
           </div>
         </div>
       </div>
