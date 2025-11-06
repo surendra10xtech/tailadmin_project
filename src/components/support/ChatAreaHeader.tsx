@@ -10,6 +10,9 @@ type User = {
   image: string;
 };
 
+
+
+
 interface ChatAreaHeaderProps {
   selectedUser: User;
 }

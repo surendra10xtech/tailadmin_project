@@ -7,10 +7,10 @@ import VoiceRecorder from "./VoiceRecorder";
 
 
 type Message = {
-  sender: string;   // always required
-  text?: string;    // optional because not every message has text
-  image?: string;   // optional because only image messages have it
-  audio?: string;   // optional because only audio messages have it
+  sender: string;   
+  text?: string;   
+  image?: string;   
+  audio?: string;   
 };
 const Message = () => {
 const [messages, setMessages] = useState<Message[]>([
@@ -37,7 +37,7 @@ const [messages, setMessages] = useState<Message[]>([
        newMessage = { text: input, sender: "me" };
     }
     // const newMessage = {text:input,sender:"me"};
-    setMessages((prev) => [...prev, newMessage]); // i dont known why red line appear
+    setMessages((prev) => [...prev, newMessage]);
     setInput("");
     console.log(messages);
     setFile(null);
@@ -183,7 +183,7 @@ const [messages, setMessages] = useState<Message[]>([
         {/* Mic Recorder Component */}
       <VoiceRecorder
           onRecordComplete={(audioURL) => {
-           setMessages((prev) => [...prev, { audio: audioURL, sender: "me" },]); // here also 
+           setMessages((prev) => [...prev, { audio: audioURL, sender: "me" },]); 
               }}
               />
 
