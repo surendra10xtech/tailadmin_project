@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useRef } from "react"; // 👈 useRef aur useEffect import karo
 import Image from "next/image";
 import { Smile, Paperclip, Send } from "lucide-react";
-import pic from "../../data/photo.png";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import VoiceRecorder from "./VoiceRecorder";
 
@@ -38,8 +37,13 @@ const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
   );
 
    useEffect(() => {
+  const timer = setTimeout(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [filteredMessages]);
+  }, 3000); // 3 seconds delay
+
+  return () => clearTimeout(timer); // cleanup to avoid memory leaks
+}, [filteredMessages]);
+
 
   const handleSend = () => {
     if (!input.trim() && !file) return;
@@ -72,7 +76,7 @@ const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
   return (
     <div className="m-2 w-full flex flex-col gap-4 relative h-screen">
       {/* Message area */}
-      <div className="flex flex-col gap-4 overflow-y-auto flex-1">
+      <div className="flex flex-col gap-4 overflow-y-auto flex-1 max-h-[70vh]">
         {filteredMessages.map((msg, i) => (
           <div
             key={i}
@@ -81,7 +85,7 @@ const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
             }`}
           >
             <Image
-              src={pic}
+              src={msg.from === loggedInUser.id ? loggedInUser.image : selectedUser.image}
               alt="Profile"
               width={40}
               height={40}

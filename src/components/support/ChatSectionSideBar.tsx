@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 
 type User = {
   id: number;
@@ -29,10 +30,10 @@ const ChatSectionSideBar: React.FC<ChatSectionSideBarProps> = ({
     <div className="p-4 border bg-white shadow-sm w-full overflow-y-auto">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-800">Chats</h3>
-        <span className="text-gray-500">⋮</span>
+        <span className="text-gray-500 font-semibold">⋮</span>
       </div>
 
-      {/* Search */}
+      {/* User Search */}
       <div className="mb-4">
         <input
           type="text"
@@ -56,9 +57,21 @@ const ChatSectionSideBar: React.FC<ChatSectionSideBarProps> = ({
                   : "hover:bg-gray-100"
               }`}
             >
-              <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-semibold">
-                {user.name.charAt(0)}
-              </div>
+              <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+  {user.image ? (
+    <Image
+      src={user.image}
+  alt={user.name}
+  width={40}      
+  height={40}     
+  className="object-cover rounded-full"
+    />
+  ) : (
+    <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-600 font-semibold">
+      {user.name.charAt(0)}
+    </div>
+  )}
+</div>
               <div>
                 <h4 className="text-sm font-medium text-gray-800">
                   {user.name}
