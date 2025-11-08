@@ -1,62 +1,62 @@
 "use client";
+
 import React, { useState } from "react";
 
-const ChatName = [
-  { name: "Kaiya George", role: "Technician", image: "" },
-  { name: "Zain", role: "Designer", image: "" },
-  { name: "Surendra", role: "Developer", image: "" },
-  { name: "Mahendra", role: "Advocate", image: "" },
-  { name: "Riya", role: "Manager", image: "" },
-  { name: "Aarav", role: "Support", image: "" },
-];
-
-
 type User = {
+  id: number;
   name: string;
   role: string;
   image: string;
 };
 
 interface ChatSectionSideBarProps {
-  onSelectUser: (user: User) => void; // callback function with User type
+  users: User[];
+  selectedUserId: number;
+  onSelectUser: (user: User) => void;
 }
 
-const ChatSectionSideBar: React.FC<ChatSectionSideBarProps> = ({ onSelectUser }) => {
+const ChatSectionSideBar: React.FC<ChatSectionSideBarProps> = ({
+  users,
+  selectedUserId,
+  onSelectUser,
+}) => {
   const [search, setSearch] = useState("");
-  const filteredUsers = ChatName.filter((user) =>
+  const filteredUsers = users.filter((user) =>
     user.name.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <div className="p-4 border  bg-white shadow-sm w-full max-w-xs  overflow-y-auto">
+    <div className="p-4 border bg-white shadow-sm w-full overflow-y-auto">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-800">Chat</h3>
+        <h3 className="text-lg font-semibold text-gray-800">Chats</h3>
         <span className="text-gray-500">⋮</span>
       </div>
 
-      {/* Search Input */}
+      {/* Search */}
       <div className="mb-4">
         <input
           type="text"
           placeholder="Search..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full px-3 py-2 text-sm border border-gray-300 
-          rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
         />
       </div>
 
       {/* User List */}
       <div className="space-y-3">
         {filteredUsers.length > 0 ? (
-          filteredUsers.map((user, index) => (
+          filteredUsers.map((user) => (
             <div
-              key={`${user.name}-${index}`}
-            onClick={() => onSelectUser(user)}
-              className="flex items-center gap-3 p-2 rounded-lg
-               hover:bg-gray-100 cursor-pointer transition"
+              key={user.id}
+              onClick={() => onSelectUser(user)}
+              className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition ${
+                selectedUserId === user.id
+                  ? "bg-blue-100"
+                  : "hover:bg-gray-100"
+              }`}
             >
-              <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 font-semibold">
+              <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-semibold">
                 {user.name.charAt(0)}
               </div>
               <div>
