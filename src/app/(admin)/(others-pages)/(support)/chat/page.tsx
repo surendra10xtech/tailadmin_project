@@ -8,12 +8,12 @@ import ChatSectionArea from "@/components/support/ChatSectionArea";
 
 const Page = () => {
   const ChatUsers = [
-    { id: 1, name: "Kaiya George", role: "Technician", image: "/images/user/user-01.jpg" }, // image fetch from public folder
-    { id: 2, name: "Zain", role: "Designer", image: "/images/user/user-02.jpg" },
-    { id: 3, name: "Surendra", role: "Developer", image: "/images/user/user-03.jpg" },
+    { id: 1, name: "Surendra Pratap", role: "Technician", image: "/images/user/user-01.jpg" }, // image fetch from public folder
+    { id: 2, name: "Ramendra", role: "Designer", image: "/images/user/user-02.jpg" },
+    { id: 3, name: "Raghvendra", role: "Developer", image: "/images/user/user-03.jpg" },
     { id: 4, name: "Mahendra", role: "Advocate", image: "/images/user/user-04.jpg" },
-    { id: 5, name: "Riya", role: "Manager", image: "/images/user/user-05.jpg" },
-    { id: 6, name: "Aarav", role: "Support", image: "/images/user/user-06.jpg" },
+    { id: 5, name: "Priya", role: "Manager", image: "/images/user/user-05.jpg" },
+    { id: 6, name: "Pooja", role: "Support", image: "/images/user/user-06.jpg" },
     { id: 7, name: "Virat", role: "Batsman", image: "/images/user/user-07.jpg" },
     { id: 8, name: "Rohit", role: "Captain", image: "/images/user/user-08.jpg" },
   ];
@@ -46,8 +46,7 @@ const Page = () => {
 
       {/* Main Chat Layout */}
       <div className="flex flex-1 overflow-hidden">
-        
-
+      
         <div className="w-1/4 border-r overflow-y-auto">
           <ChatSectionSideBar
             users={ChatUsers.filter((u) => u.id !== loggedInUser.id)}

@@ -1,13 +1,13 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react"; // 👈 useRef aur useEffect import karo
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Smile, Paperclip, Send } from "lucide-react";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import VoiceRecorder from "./VoiceRecorder";
 
 type MessageType = {
-  from: number;
-  to: number;
+  sender: number;
+  receiver: number;
   text?: string;
   image?: string;
   audio?: string;
@@ -19,8 +19,8 @@ interface MessageProps {
 }
 const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
   const [messages, setMessages] = useState<MessageType[]>([
-    { from: 1, to: 2, text: "Hello jiiiiiiiii, Good morning" },
-    { from: 2, to: 1, text: "Hello! How are you?" },
+    { sender: 1, receiver: 2, text: "Hello jiiiiiiiii, Good morning" },
+    { sender: 2, receiver: 1, text: "Hello! How are you?" },
   ]);
 
   const [input, setInput] = useState("");
@@ -29,29 +29,31 @@ const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
 
     const messageEndRef = useRef<HTMLDivElement | null>(null);
 
-  // ✅ Filter messages for selected user
+  //  Filter messages for selected user
    const filteredMessages = messages.filter(
     (msg) =>
-      (msg.from === loggedInUser.id && msg.to === selectedUser.id) ||
-      (msg.from === selectedUser.id && msg.to === loggedInUser.id)
+      (msg.sender === loggedInUser.id && msg.receiver === selectedUser.id) ||
+      (msg.sender === selectedUser.id && msg.receiver === loggedInUser.id)
   );
 
    useEffect(() => {
   const timer = setTimeout(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, 3000); // 3 seconds delay
+  }, 3000);
 
-  return () => clearTimeout(timer); // cleanup to avoid memory leaks
+  return () => clearTimeout(timer); 
 }, [filteredMessages]);
 
 
   const handleSend = () => {
     if (!input.trim() && !file) return;
+      const isImageURL = input.startsWith("blob:");
+
 
      const newMessage: MessageType = {
-      from: loggedInUser.id,
-      to: selectedUser.id,
-      text: input,
+      sender: loggedInUser.id,
+      receiver: selectedUser.id,
+      text: isImageURL ? undefined : input,
       image: file || undefined,
     };
 
@@ -66,6 +68,7 @@ const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
 
     const imageURL = URL.createObjectURL(selectedFile);
     setFile(imageURL);
+    setInput(imageURL);
   };
 
   const handleEmojiClick = (emojiData: EmojiClickData) => {
@@ -81,11 +84,11 @@ const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
           <div
             key={i}
             className={`flex items-end gap-3 ${
-              msg.from === loggedInUser.id ? "self-end flex-row-reverse" : ""
+              msg.sender === loggedInUser.id ? "self-end flex-row-reverse" : ""
             }`}
           >
             <Image
-              src={msg.from === loggedInUser.id ? loggedInUser.image : selectedUser.image}
+              src={msg.sender === loggedInUser.id ? loggedInUser.image : selectedUser.image}
               alt="Profile"
               width={40}
               height={40}
@@ -93,7 +96,7 @@ const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
             />
             <div
               className={`p-2 rounded-lg text-sm ${
-                msg.from === loggedInUser.id
+                msg.sender === loggedInUser.id
                   ? "bg-blue-500 text-white rounded-br-none"
                   : "bg-gray-300 text-black rounded-bl-none"
               }`}
@@ -131,6 +134,12 @@ const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
           placeholder="Type your message..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => {
+         if (e.key === "Enter" && !e.shiftKey) {
+         e.preventDefault(); 
+         handleSend(); 
+          }
+       }}
           className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm outline-none"
         />
 
@@ -148,8 +157,8 @@ const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
           onRecordComplete={(audioURL) =>
             setMessages((prev) => [
               ...prev,
-              { from: loggedInUser.id, 
-                to: selectedUser.id,
+              { sender: loggedInUser.id, 
+                receiver: selectedUser.id,
                 audio: audioURL, },
             ])
           }
@@ -164,7 +173,7 @@ const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
       </div>
 
       {showEmoji && (
-        <div className="absolute bottom-14 left-[50%] z-10">
+        <div className="absolute bottom-[25%] left-[0%] z-10">
           <EmojiPicker onEmojiClick={handleEmojiClick} />
         </div>
       )}

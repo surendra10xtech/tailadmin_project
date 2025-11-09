@@ -60,7 +60,7 @@ const ChatSectionSideBar: React.FC<ChatSectionSideBarProps> = ({
               <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
   {user.image ? (
     <Image
-      src={user.image}
+  src={user.image}
   alt={user.name}
   width={40}      
   height={40}     
