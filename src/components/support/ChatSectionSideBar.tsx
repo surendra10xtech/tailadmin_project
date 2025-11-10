@@ -40,7 +40,8 @@ const ChatSectionSideBar: React.FC<ChatSectionSideBarProps> = ({
           placeholder="Search..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+          className="w-full px-3 py-2 text-sm border border-gray-300 
+          rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
         />
       </div>
 
@@ -67,7 +68,8 @@ const ChatSectionSideBar: React.FC<ChatSectionSideBarProps> = ({
   className="object-cover rounded-full"
     />
   ) : (
-    <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-600 font-semibold">
+    <div className="w-full h-full bg-gray-200 flex items-center justify-center
+     text-gray-600 font-semibold">
       {user.name.charAt(0)}
     </div>
   )}

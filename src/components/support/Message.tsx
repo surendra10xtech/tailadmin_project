@@ -47,9 +47,8 @@ const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
 
   const handleSend = () => {
     if (!input.trim() && !file) return;
+    
       const isImageURL = input.startsWith("blob:");
-
-
      const newMessage: MessageType = {
       sender: loggedInUser.id,
       receiver: selectedUser.id,
@@ -121,7 +120,7 @@ const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
       </div>
 
       {/* Input area */}
-      <div className="flex items-center gap-3 mt-4 p-2 border-t border-gray-300 bg-white rounded-lg">
+      <div className="fixed bottom-4 flex items-center gap-3 mt-4 p-2 border border-gray-300 bg-white rounded-lg">
         <button
           onClick={() => setShowEmoji(!showEmoji)}
           className="text-gray-600 hover:text-yellow-500"
@@ -140,7 +139,7 @@ const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
          handleSend(); 
           }
        }}
-          className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm outline-none"
+        className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm outline-none w-full"
         />
 
         <label className="cursor-pointer text-gray-600 hover:text-blue-600">
