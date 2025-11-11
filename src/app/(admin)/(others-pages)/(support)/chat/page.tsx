@@ -1,21 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
+import { ChatUsers } from "@/data/ChatData";
 import ChatSectionSideBar from "@/components/support/ChatSectionSideBar";
 import ChatSectionArea from "@/components/support/ChatSectionArea";
 
 const Page = () => {
-  const ChatUsers = [
-    { id: 1, name: "Surendra Pratap", role: "Technician", image: "/images/user/user-01.jpg" }, // image fetch from public folder
-    { id: 2, name: "Ramendra", role: "Designer", image: "/images/user/user-02.jpg" },
-    { id: 3, name: "Raghvendra", role: "Developer", image: "" },
-    { id: 4, name: "Mahendra", role: "Advocate", image: "/images/user/user-04.jpg" },
-    { id: 5, name: "Priya", role: "Manager", image: "/images/user/user-05.jpg" },
-    { id: 6, name: "Pooja", role: "Support", image: "/images/user/user-06.jpg" },
-    { id: 7, name: "Virat", role: "Batsman", image: "/images/user/user-07.jpg" },
-    { id: 8, name: "Rohit", role: "Captain", image: "/images/user/user-08.jpg" },
-  ];
-
+  
   const [loggedInUser, setLoggedInUser] = useState(ChatUsers[0]);
   const [selectedUser, setSelectedUser] = useState(ChatUsers[1]);
 

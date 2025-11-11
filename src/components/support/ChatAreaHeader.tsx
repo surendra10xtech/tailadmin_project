@@ -1,28 +1,15 @@
 "use client";
 import React from "react";
-import Image from "next/image";
-import defaultImage  from "../../data/photo.png";
+import Image from "next/image"
+import { ChatAreaHeaderProps } from "@/types/chat";
 
-
-type User = {
-  name: string;
-  role: string;
-  image: string;
-};
-
-
-
-
-interface ChatAreaHeaderProps {
-  selectedUser: User;
-}
 const ChatAreaHeader: React.FC<ChatAreaHeaderProps> = ({ selectedUser }) => {
   return (
     <div className="w-full flex border-b-gray-600 border-b-2  items-center justify-between px-6 py-3">
       {/* Left section  */}
       <div className="flex items-center gap-3 flex-shrink-0">
         <Image
-          src={selectedUser?.image || defaultImage}
+          src={selectedUser?.image}
           alt="Profile photo"
           width={45}
           height={45}

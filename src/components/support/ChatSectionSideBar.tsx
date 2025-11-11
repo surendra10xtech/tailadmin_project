@@ -2,19 +2,10 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import { filterUsers } from "@/hooks/useChat";
+import { ChatSectionSideBarProps } from "@/types/chat";
 
-type User = {
-  id: number;
-  name: string;
-  role: string;
-  image: string;
-};
 
-interface ChatSectionSideBarProps {
-  users: User[];
-  selectedUserId: number;
-  onSelectUser: (user: User) => void;
-}
 
 const ChatSectionSideBar: React.FC<ChatSectionSideBarProps> = ({
   users,
@@ -22,9 +13,7 @@ const ChatSectionSideBar: React.FC<ChatSectionSideBarProps> = ({
   onSelectUser,
 }) => {
   const [search, setSearch] = useState("");
-  const filteredUsers = users.filter((user) =>
-    user.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredUsers = filterUsers(users, search);
 
   return (
     <div className="p-4 border bg-white shadow-sm w-full overflow-y-auto">

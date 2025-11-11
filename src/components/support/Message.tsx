@@ -4,25 +4,13 @@ import Image from "next/image";
 import { Smile, Paperclip, Send } from "lucide-react";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import VoiceRecorder from "./VoiceRecorder";
+import { MessageType } from "@/types/message";
+import { MessageProps } from "@/types/chat";
+import { initialMessages } from "@/data/ChatData";
 
-type MessageType = {
-  sender: number;
-  receiver: number;
-  text?: string;
-  image?: string;
-  audio?: string;
-};
 
-interface MessageProps {
-  loggedInUser: { id: number; name: string; role: string; image: string };
-  selectedUser: { id: number; name: string; role: string; image: string };
-}
 const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
-  const [messages, setMessages] = useState<MessageType[]>([
-    { sender: 1, receiver: 2, text: "Hello jiiiiiiiii, Good morning" },
-    { sender: 2, receiver: 1, text: "Hello! How are you?" },
-  ]);
-
+  const [messages, setMessages] = useState<MessageType[]>(initialMessages);
   const [input, setInput] = useState("");
   const [file, setFile] = useState<string | null>(null);
   const [showEmoji, setShowEmoji] = useState(false);
@@ -47,7 +35,6 @@ const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
 
   const handleSend = () => {
     if (!input.trim() && !file) return;
-    
       const isImageURL = input.startsWith("blob:");
      const newMessage: MessageType = {
       sender: loggedInUser.id,

@@ -2,18 +2,10 @@
 import React from "react";
 import ChatAreaHeader from "./ChatAreaHeader";
 import Message from "./Message";
+import { ChatSectionAreaProps } from "@/types/chat";
 
-type User = {
-  id: number;
-  name: string;
-  role: string;
-  image: string;
-};
 
-interface ChatSectionAreaProps {
-  selectedUser: User;
-   loggedInUser: User;
-}
+
 
 const ChatSectionArea: React.FC<ChatSectionAreaProps> = ({
    selectedUser,
