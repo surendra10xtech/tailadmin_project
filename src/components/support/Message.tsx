@@ -4,13 +4,15 @@ import Image from "next/image";
 import { Smile, Paperclip, Send } from "lucide-react";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import VoiceRecorder from "./VoiceRecorder";
-import { MessageType } from "@/types/message";
+// import { MessageType } from "@/types/message";
 import { MessageProps } from "@/types/chat";
-import { initialMessages } from "@/data/ChatData";
+// import { initialMessages } from "@/data/ChatData";
+import { useChat } from "@/hooks/useChat";
+
 
 
 const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
-  const [messages, setMessages] = useState<MessageType[]>(initialMessages);
+const { messages, sendMessage } = useChat();
   const [input, setInput] = useState("");
   const [file, setFile] = useState<string | null>(null);
   const [showEmoji, setShowEmoji] = useState(false);
@@ -33,20 +35,21 @@ const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
 }, [filteredMessages]);
 
 
-  const handleSend = () => {
+  const handleSend = async() => {
     if (!input.trim() && !file) return;
-      const isImageURL = input.startsWith("blob:");
-     const newMessage: MessageType = {
-      sender: loggedInUser.id,
-      receiver: selectedUser.id,
-      text: isImageURL ? undefined : input,
-      image: file || undefined,
-    };
-
-    setMessages((prev) => [...prev, newMessage]);
-    setInput("");
-    setFile(null);
+    // const isImageURL = input.startsWith("blob:");
+     const newMessage = {
+    sender: loggedInUser.id,
+    receiver: selectedUser.id,
+    text: file ? undefined : input,
+    image: file || undefined,
   };
+
+  // backend call
+    await sendMessage(newMessage);
+  setInput("");
+  setFile(null);
+};
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -139,16 +142,17 @@ const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
           />
         </label>
 
-        <VoiceRecorder
-          onRecordComplete={(audioURL) =>
-            setMessages((prev) => [
-              ...prev,
-              { sender: loggedInUser.id, 
-                receiver: selectedUser.id,
-                audio: audioURL, },
-            ])
-          }
-        />
+      <VoiceRecorder
+  onRecordComplete={(audioURL) =>
+    sendMessage({
+      sender: loggedInUser.id,
+      receiver: selectedUser.id,
+      audio: audioURL,
+    })
+  }
+/>
+
+
 
         <button
           onClick={handleSend}
