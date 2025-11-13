@@ -4,46 +4,43 @@ import Image from "next/image";
 import { Smile, Paperclip, Send } from "lucide-react";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import VoiceRecorder from "./VoiceRecorder";
-import { MessageType } from "@/types/message";
 import { MessageProps } from "@/types/chat";
 import { initialMessages } from "@/data/ChatData";
-import { addMessage, getAllMessages } from "@/utils/db"; 
-
-
+import { addMessage, getAllMessages } from "@/utils/db";
+import { useChat } from "@/hooks/useChat";
 
 const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
-  const [messages, setMessages] = useState<MessageType[]>(initialMessages);
+  const { messages, setMessages, sendMessage } = useChat(); // ✅ merged from both
   const [input, setInput] = useState("");
   const [file, setFile] = useState<string | null>(null);
   const [showEmoji, setShowEmoji] = useState(false);
+  const messageEndRef = useRef<HTMLDivElement | null>(null);
 
-    const messageEndRef = useRef<HTMLDivElement | null>(null);
-
-
-    // Load messages from IndexedDB
+  // Load messages from IndexedDB
   useEffect(() => {
     (async () => {
       const storedMessages = await getAllMessages();
       setMessages(storedMessages.length ? storedMessages : initialMessages);
     })();
-  }, []);
-  
-  //  Filter messages for selected user
-   const filteredMessages = messages.filter(
+  }, [setMessages]);
+
+  // Filter messages for selected user
+  const filteredMessages = messages.filter(
     (msg) =>
       (msg.sender === loggedInUser.id && msg.receiver === selectedUser.id) ||
       (msg.sender === selectedUser.id && msg.receiver === loggedInUser.id)
   );
 
-    useEffect(() => {
+  // Scroll to bottom when messages change
+  useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [filteredMessages]);
 
-
-  const handleSend = async() => {
+  const handleSend = async () => {
     if (!input.trim() && !file) return;
-      const isImageURL = input.startsWith("blob:");
-     const newMessage: MessageType = {
+
+    const isImageURL = input.startsWith("blob:");
+    const newMessage = {
       sender: loggedInUser.id,
       receiver: selectedUser.id,
       text: isImageURL ? undefined : input,
@@ -51,8 +48,13 @@ const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
       time: new Date().toLocaleTimeString(),
     };
 
-    setMessages((prev) => [...prev, newMessage]);
-     await addMessage(newMessage);
+    // Update local + IndexedDB
+    setMessages((prev: any) => [...prev, newMessage]);
+    await addMessage(newMessage);
+
+    // Send via hook (if backend exists)
+    await sendMessage(newMessage);
+
     setInput("");
     setFile(null);
   };
@@ -60,7 +62,6 @@ const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (!selectedFile) return;
-
     const imageURL = URL.createObjectURL(selectedFile);
     setFile(imageURL);
     setInput(imageURL);
@@ -83,7 +84,11 @@ const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
             }`}
           >
             <Image
-              src={msg.sender === loggedInUser.id ? loggedInUser.image : selectedUser.image}
+              src={
+                msg.sender === loggedInUser.id
+                  ? loggedInUser.image
+                  : selectedUser.image
+              }
               alt="Profile"
               width={40}
               height={40}
@@ -116,7 +121,7 @@ const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
       </div>
 
       {/* Input area */}
-      <div className="fixed bottom-4 flex items-center gap-3 mt-4 p-2 border border-gray-300 bg-white rounded-lg">
+      <div className="fixed bottom-4 flex items-center gap-3 mt-4 p-2 border border-gray-300 bg-white rounded-lg w-[95%]">
         <button
           onClick={() => setShowEmoji(!showEmoji)}
           className="text-gray-600 hover:text-yellow-500"
@@ -130,12 +135,12 @@ const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {
-         if (e.key === "Enter" && !e.shiftKey) {
-         e.preventDefault(); 
-         handleSend(); 
-          }
-       }}
-        className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm outline-none w-full"
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleSend();
+            }
+          }}
+          className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm outline-none w-full"
         />
 
         <label className="cursor-pointer text-gray-600 hover:text-blue-600">
@@ -150,12 +155,11 @@ const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
 
         <VoiceRecorder
           onRecordComplete={(audioURL) =>
-            setMessages((prev) => [
-              ...prev,
-              { sender: loggedInUser.id, 
-                receiver: selectedUser.id,
-                audio: audioURL, },
-            ])
+            sendMessage({
+              sender: loggedInUser.id,
+              receiver: selectedUser.id,
+              audio: audioURL,
+            })
           }
         />
 
