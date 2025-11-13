@@ -10,13 +10,13 @@ import { addMessage, getAllMessages } from "@/utils/db";
 import { useChat } from "@/hooks/useChat";
 
 const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
-  const { messages, setMessages, sendMessage } = useChat(); // ✅ merged from both
+  const { messages, setMessages, sendMessage } = useChat(); // ✅ merged from both hooks
   const [input, setInput] = useState("");
   const [file, setFile] = useState<string | null>(null);
   const [showEmoji, setShowEmoji] = useState(false);
   const messageEndRef = useRef<HTMLDivElement | null>(null);
 
-  // Load messages from IndexedDB
+  // ✅ Load messages from IndexedDB
   useEffect(() => {
     (async () => {
       const storedMessages = await getAllMessages();
@@ -24,18 +24,19 @@ const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
     })();
   }, [setMessages]);
 
-  // Filter messages for selected user
+  // ✅ Filter messages for selected user
   const filteredMessages = messages.filter(
     (msg) =>
       (msg.sender === loggedInUser.id && msg.receiver === selectedUser.id) ||
       (msg.sender === selectedUser.id && msg.receiver === loggedInUser.id)
   );
 
-  // Scroll to bottom when messages change
+  // ✅ Auto scroll to bottom
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [filteredMessages]);
 
+  // ✅ Handle send message
   const handleSend = async () => {
     if (!input.trim() && !file) return;
 
@@ -48,11 +49,11 @@ const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
       time: new Date().toLocaleTimeString(),
     };
 
-    // Update local + IndexedDB
+    // Save locally + DB
     setMessages((prev: any) => [...prev, newMessage]);
     await addMessage(newMessage);
 
-    // Send via hook (if backend exists)
+    // Send via hook (backend)
     await sendMessage(newMessage);
 
     setInput("");
@@ -62,6 +63,7 @@ const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (!selectedFile) return;
+
     const imageURL = URL.createObjectURL(selectedFile);
     setFile(imageURL);
     setInput(imageURL);
@@ -74,7 +76,7 @@ const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
 
   return (
     <div className="m-2 w-full flex flex-col gap-4 relative h-screen">
-      {/* Message area */}
+      {/* Message list */}
       <div className="flex flex-col gap-4 overflow-y-auto flex-1 max-h-[70vh]">
         {filteredMessages.map((msg, i) => (
           <div
@@ -120,7 +122,7 @@ const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
         <div ref={messageEndRef} />
       </div>
 
-      {/* Input area */}
+      {/* Input section */}
       <div className="fixed bottom-4 flex items-center gap-3 mt-4 p-2 border border-gray-300 bg-white rounded-lg w-[95%]">
         <button
           onClick={() => setShowEmoji(!showEmoji)}
