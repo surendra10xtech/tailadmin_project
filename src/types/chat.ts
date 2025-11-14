@@ -1,5 +1,7 @@
 
 import { User } from "@/types/user";
+import { MessageType } from "@/types/message"; 
+
 
 export interface ChatSectionSideBarProps {
   users: User[];
@@ -17,8 +19,10 @@ export interface ChatAreaHeaderProps {
 }
 
 export interface MessageProps { 
-  loggedInUser: User;
+   loggedInUser: User;
   selectedUser: User;
+  messages?: MessageType[];
+  sendMessage?: (msg: MessageType) => void;
 }
 
 // interface MessageProps {
