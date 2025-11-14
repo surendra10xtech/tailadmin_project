@@ -1,24 +1,34 @@
+
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Smile, Paperclip, Send } from "lucide-react";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import VoiceRecorder from "./VoiceRecorder";
-// import { MessageType } from "@/types/message";
+import { MessageType } from "@/types/message";
 import { MessageProps } from "@/types/chat";
-// import { initialMessages } from "@/data/ChatData";
-import { useChat } from "@/hooks/useChat";
+import { initialMessages } from "@/data/ChatData";
+import { addMessage, getAllMessages } from "@/utils/db"; 
 
 
 
 const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
-const { messages, sendMessage } = useChat();
+  const [messages, setMessages] = useState<MessageType[]>(initialMessages);
   const [input, setInput] = useState("");
   const [file, setFile] = useState<string | null>(null);
   const [showEmoji, setShowEmoji] = useState(false);
 
     const messageEndRef = useRef<HTMLDivElement | null>(null);
 
+
+    // Load messages from IndexedDB
+  useEffect(() => {
+    (async () => {
+      const storedMessages = await getAllMessages();
+      setMessages(storedMessages.length ? storedMessages : initialMessages);
+    })();
+  }, []);
+  
   //  Filter messages for selected user
    const filteredMessages = messages.filter(
     (msg) =>
@@ -26,30 +36,27 @@ const { messages, sendMessage } = useChat();
       (msg.sender === selectedUser.id && msg.receiver === loggedInUser.id)
   );
 
-   useEffect(() => {
-  const timer = setTimeout(() => {
+    useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, 3000);
-
-  return () => clearTimeout(timer); 
-}, [filteredMessages]);
+  }, [filteredMessages]);
 
 
   const handleSend = async() => {
     if (!input.trim() && !file) return;
-    // const isImageURL = input.startsWith("blob:");
-     const newMessage = {
-    sender: loggedInUser.id,
-    receiver: selectedUser.id,
-    text: file ? undefined : input,
-    image: file || undefined,
-  };
+      const isImageURL = input.startsWith("blob:");
+     const newMessage: MessageType = {
+      sender: loggedInUser.id,
+      receiver: selectedUser.id,
+      text: isImageURL ? undefined : input,
+      image: file || undefined,
+      time: new Date().toLocaleTimeString(),
+    };
 
-  // backend call
-    await sendMessage(newMessage);
-  setInput("");
-  setFile(null);
-};
+    setMessages((prev) => [...prev, newMessage]);
+     await addMessage(newMessage);
+    setInput("");
+    setFile(null);
+  };
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -142,17 +149,16 @@ const { messages, sendMessage } = useChat();
           />
         </label>
 
-      <VoiceRecorder
-  onRecordComplete={(audioURL) =>
-    sendMessage({
-      sender: loggedInUser.id,
-      receiver: selectedUser.id,
-      audio: audioURL,
-    })
-  }
-/>
-
-
+        <VoiceRecorder
+          onRecordComplete={(audioURL) =>
+            setMessages((prev) => [
+              ...prev,
+              { sender: loggedInUser.id, 
+                receiver: selectedUser.id,
+                audio: audioURL, },
+            ])
+          }
+        />
 
         <button
           onClick={handleSend}
