@@ -8,6 +8,7 @@ import { MessageType } from "@/types/message";
 import { MessageProps } from "@/types/chat";
 import { initialMessages } from "@/data/ChatData";
 import { addMessage, getAllMessages } from "@/utils/db"; 
+import SendTemplateButton from "@/components/SendTemplateButton";
 
 
 
@@ -19,6 +20,10 @@ const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
 
     const messageEndRef = useRef<HTMLDivElement | null>(null);
 
+   const bookingId = "BK12345";
+   const driverName = "Ravi Kumar";
+   const vehicleNumber = "HR26DK5544";
+
 
     // Load messages from IndexedDB
   useEffect(() => {
@@ -28,7 +33,7 @@ const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
     })();
   }, []);
   
-  //  Filter messages for selected user
+  // Filter messages for selected user
    const filteredMessages = messages.filter(
     (msg) =>
       (msg.sender === loggedInUser.id && msg.receiver === selectedUser.id) ||
@@ -71,24 +76,6 @@ const Message: React.FC<MessageProps> = ({ loggedInUser, selectedUser }) => {
     setShowEmoji(false);
   };
 
-const sendTemplateMessage = async () => {
-  try {
-    const res = await fetch("/api/sendTemplate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        phoneNumber: process.env.NEXT_PUBLIC_WHATSAPP_TEST_NUMBER,
-        templateName: "hello_world",
-      }),
-    });
-    
- 
-    const data = await res.json();
-    console.log("Message sent hua ye:", data);
-  } catch (err) {
-    console.error("API Error:", err);
-  }
-};
 
   return (
     <div className="m-2 w-full flex flex-col gap-4 relative h-screen">
@@ -135,16 +122,19 @@ const sendTemplateMessage = async () => {
       </div>
 
         {/* Template Send Button */}
-<div className="fixed bottom-20 left-80 bg-red-500">
-  <button
-    onClick={sendTemplateMessage}
-    className="px-4 py-2 bg-green-500 text-white rounded-lg text-sm shadow-md hover:bg-green-600 transition"
-  >
-    Send Template
-  </button>
+<div className="fixed bottom-20 right-85 ">
+  <SendTemplateButton 
+  templateName="order_update"
+  phoneNumber={`${loggedInUser.ph}`}
+   params={[
+    bookingId,
+    selectedUser.name,
+    driverName,
+    vehicleNumber
+  ]}
+  label="Send"
+/>
 </div>
-
-
 
       {/* Input area */}
       <div className="fixed bottom-4 flex items-center gap-3 mt-4 p-2 border border-gray-300 bg-white rounded-lg">

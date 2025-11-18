@@ -5,5 +5,6 @@ export type MessageType  = {
   text?: string;
   image?: string;
   time?: string;
-   audio?: string;       
+   audio?: string;  
+   ph?:number;     
 };

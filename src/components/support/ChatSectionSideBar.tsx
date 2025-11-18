@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { filterUsers } from "@/hooks/useChat";
 import { ChatSectionSideBarProps } from "@/types/chat";
+import SendTemplateButton from "@/components/SendTemplateButton";
 
 
 
@@ -12,6 +13,7 @@ const ChatSectionSideBar: React.FC<ChatSectionSideBarProps> = ({
   selectedUserId,
   onSelectUser,
 }) => {
+  const orderId = 12345;
   const [search, setSearch] = useState("");
   const filteredUsers = filterUsers(users, search);
 
@@ -41,7 +43,7 @@ const ChatSectionSideBar: React.FC<ChatSectionSideBarProps> = ({
             <div
               key={user.id}
               onClick={() => onSelectUser(user)}
-              className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition ${
+              className={`flex justify-center items-center gap-3 p-2 rounded-lg cursor-pointer transition ${
                 selectedUserId === user.id
                   ? "bg-blue-100"
                   : "hover:bg-gray-100"
@@ -69,6 +71,14 @@ const ChatSectionSideBar: React.FC<ChatSectionSideBarProps> = ({
                 </h4>
                 <p className="text-xs text-gray-500">{user.role}</p>
               </div>
+                <div className="bg-white rounded">
+                 <SendTemplateButton 
+                 templateName="order_update"
+                 phoneNumber={user.ph}
+                 params={[user.name, orderId]}
+                 label="Send"
+                /> 
+                </div>
             </div>
           ))
         ) : (

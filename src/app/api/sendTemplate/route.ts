@@ -1,7 +1,7 @@
 export async function POST(req) {
   try {
     const body = await req.json();
-    const { phoneNumber, templateName } = body;
+    const { phoneNumber, templateName, params = [] } = body;
 
      const token = process.env.WHATSAPP_ACCESS_TOKEN;
     const phoneId = process.env.PHONE_NUMBER_ID;
@@ -26,7 +26,17 @@ export async function POST(req) {
         type: "template",
         template: {
           name: templateName,
-          language: { code: "en_US" },
+          language: { code: "en" },
+
+          components: [
+            {
+              type: "body",
+              parameters: params.map((p) => ({
+                type: "text",
+                text: p,
+              })),
+            },
+          ],
         },
       }),
     });
