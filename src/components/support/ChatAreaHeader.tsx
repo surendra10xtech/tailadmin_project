@@ -9,7 +9,7 @@ const ChatAreaHeader: React.FC<ChatAreaHeaderProps> = ({ selectedUser }) => {
       {/* Left section  */}
       <div className="flex items-center gap-3 flex-shrink-0">
         <Image
-          src={selectedUser?.image}
+          src={selectedUser?.image || "/images/user/default.jpg"}
           alt="Profile photo"
           width={45}
           height={45}
