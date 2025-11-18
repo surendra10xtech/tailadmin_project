@@ -6,8 +6,8 @@ export async function POST(req) {
      const token = process.env.WHATSAPP_ACCESS_TOKEN;
     const phoneId = process.env.PHONE_NUMBER_ID;
 
-    console.log("SERVER TOKEN:", token);        // ✔ yaha print hoga
-    console.log("SERVER PHONE ID:", phoneId);   // ✔ yaha print hoga
+    console.log("SERVER TOKEN:", token);       
+    console.log("SERVER PHONE ID:", phoneId);   
     console.log("RECEIVED BODY:", body);
 
 

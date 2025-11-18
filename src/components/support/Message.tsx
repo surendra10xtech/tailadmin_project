@@ -1,4 +1,3 @@
-
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
@@ -82,6 +81,8 @@ const sendTemplateMessage = async () => {
         templateName: "hello_world",
       }),
     });
+    
+ 
     const data = await res.json();
     console.log("Message sent hua ye:", data);
   } catch (err) {
@@ -133,7 +134,6 @@ const sendTemplateMessage = async () => {
         <div ref={messageEndRef} />
       </div>
 
-
         {/* Template Send Button */}
 <div className="fixed bottom-20 left-80 bg-red-500">
   <button
@@ -143,6 +143,8 @@ const sendTemplateMessage = async () => {
     Send Template
   </button>
 </div>
+
+
 
       {/* Input area */}
       <div className="fixed bottom-4 flex items-center gap-3 mt-4 p-2 border border-gray-300 bg-white rounded-lg">

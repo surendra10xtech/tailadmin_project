@@ -1,25 +1,14 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { ChatUsers } from "@/data/ChatData";
 import ChatSectionSideBar from "@/components/support/ChatSectionSideBar";
 import ChatSectionArea from "@/components/support/ChatSectionArea";
-import { useChat } from "@/hooks/useChat";
-import { User } from "@/types/user";
 
 const Page = () => {
-  const { users, loading } = useChat();
- const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  useEffect(() => {
-    if (!loading && users.length) {
-      setLoggedInUser(prev => prev ?? users[0]);
-      setSelectedUser(prev => prev ?? users[1] ?? users[0]);
-    }
-  }, [loading, users]);
   
-   if (!loggedInUser || !selectedUser) return <div>Loading...</div>;
-
+  const [loggedInUser, setLoggedInUser] = useState(ChatUsers[0]);
+  const [selectedUser, setSelectedUser] = useState(ChatUsers[1]);
 
   return (
     <div className="flex flex-col h-[100vh] bg-gray-50 overflow-hidden">
@@ -29,7 +18,7 @@ const Page = () => {
         <select
           value={loggedInUser.id}
           onChange={(e) => {
-            const user = users.find(
+            const user = ChatUsers.find(
               (u) => u.id === Number(e.target.value)
             );
             if (user) setLoggedInUser(user);
@@ -49,7 +38,7 @@ const Page = () => {
       
         <div className="w-1/4 border-r overflow-y-auto">
           <ChatSectionSideBar
-            users={users.filter((u) => u.id !== loggedInUser.id)}
+            users={ChatUsers.filter((u) => u.id !== loggedInUser.id)}
             selectedUserId={selectedUser.id}
             onSelectUser={setSelectedUser}
           />
